@@ -162,8 +162,12 @@ export default function Home() {
               </a>
             </div>
           </div>
-          {/* TODO: foto real de trabajo de campo (public/images/), sin overlay */}
-          <div className="aspect-[3/2] rounded bg-cruz-bgAlt" role="img" aria-label="Foto de trabajo de campo (pendiente)" />
+          {/* TODO: reemplazar por versión en alta resolución cuando esté el asset */}
+          <img
+            src="/images/hero-campo.jpg"
+            alt="Voluntarios de Cruz Roja Argentina relevando información en una comunidad"
+            className="aspect-[3/2] w-full rounded object-cover"
+          />
         </div>
 
         <div className="mt-14 flex flex-wrap justify-center gap-y-3 border-y border-cruz-border py-5 text-sm font-medium text-cruz-gris">
@@ -174,7 +178,7 @@ export default function Home() {
       </section>
 
       {/* b) Franja institucional */}
-      <m.section id="institucional" {...fadeUp()} className="mx-auto max-w-container px-4 pb-20 md:px-6">
+      <m.section id="institucional" {...fadeUp()} className="mx-auto max-w-container px-4 pb-16 md:px-6">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
             <h2 className="text-2xl font-extrabold md:text-3xl">
@@ -192,7 +196,7 @@ export default function Home() {
       </m.section>
 
       {/* c) Estudios */}
-      <m.section id="estudios" {...fadeUp()} className="mx-auto max-w-container px-4 pb-20 md:px-6">
+      <m.section id="estudios" {...fadeUp()} className="mx-auto max-w-container px-4 pb-16 md:px-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h2 className="text-2xl font-extrabold md:text-3xl">Conocé todos nuestros estudios</h2>
           <button onClick={abrirBuscador}
@@ -302,7 +306,7 @@ export default function Home() {
       </m.section>
 
       {/* g) Comentarios + Donación */}
-      <m.section {...fadeUp()} className="mx-auto max-w-container px-4 pb-20 pt-16 md:px-6 md:pt-24">
+      <m.section {...fadeUp()} className="mx-auto max-w-container px-4 pb-16 pt-12 md:px-6 md:pt-16">
         <div className="grid gap-8 md:grid-cols-2">
           <div id="comentarios" className="rounded bg-cruz-bgAlt p-8">
             <h2 className="text-xl font-extrabold">Comentarios</h2>
@@ -314,20 +318,23 @@ export default function Home() {
               <Comentarios />
             </div>
           </div>
-          <div id="donacion" className="rounded border border-cruz-border border-t-[3px] border-t-cruz-red bg-white p-8">
+          <div id="donacion" className="flex flex-col rounded border border-cruz-border border-t-[3px] border-t-cruz-red bg-white p-8">
             <h2 className="text-xl font-extrabold">Doná</h2>
             <p className="mt-3 text-sm text-cruz-gris">
               Tu colaboración mensual o por única vez nos permite seguir transformando realidades.
             </p>
             {/* TODO §15: URL de donación */}
             <a href="https://www.cruzroja.org.ar" target="_blank" rel="noopener noreferrer"
-               className="mt-6 inline-block rounded bg-cruz-red px-6 py-3 font-medium text-white transition-colors hover:bg-cruz-redHover">
+               className="mt-6 inline-block self-start rounded bg-cruz-red px-6 py-3 font-medium text-white transition-colors hover:bg-cruz-redHover">
               Doná ahora
             </a>
             <p className="mt-4 text-sm text-cruz-gris">o llamá al <strong>0810-999-2222</strong></p>
 
             <p className="mt-8 text-sm font-bold">Tu aporte hace posible proyectos como estos:</p>
-            <div className="marquee mt-4" aria-label="Estudios del Observatorio">
+            {/* wrapper relativo: el marquee va absolute para no inflar la altura
+                de la fila; la altura del módulo la define el form de Comentarios */}
+            <div className="relative mt-4 h-56 md:h-auto md:min-h-0 md:flex-1">
+              <div className="marquee h-full md:absolute md:inset-0" aria-label="Estudios del Observatorio">
               <div className="marquee-track">
                 {[...estudios, ...estudios].map((e, i) => {
                   const externa = e.url.startsWith('http')
@@ -337,16 +344,17 @@ export default function Home() {
                     : { to: e.url }
                   return (
                     <Tag key={`${e.id}-${i}`} {...props} aria-hidden={i >= estudios.length}
-                         className="group mr-3 flex w-60 shrink-0 items-center gap-3 rounded border border-cruz-border p-2 transition-shadow hover:shadow-card">
-                      <div className="h-12 w-[72px] shrink-0 overflow-hidden rounded bg-cruz-bgAlt">
+                         className="group mr-3 flex h-full w-56 shrink-0 flex-col overflow-hidden rounded border border-cruz-border transition-shadow hover:shadow-card">
+                      <div className="min-h-0 w-full flex-1 overflow-hidden bg-cruz-bgAlt">
                         {e.imagen && <img src={e.imagen} alt="" className="h-full w-full object-cover" />}
                       </div>
-                      <p className="text-xs font-bold leading-snug text-cruz-ink line-clamp-2 group-hover:text-cruz-redOh">
+                      <p className="clamp-2 m-3 text-xs font-bold leading-snug text-cruz-ink group-hover:text-cruz-redOh">
                         {e.titulo}
                       </p>
                     </Tag>
                   )
                 })}
+              </div>
               </div>
             </div>
           </div>
@@ -354,7 +362,7 @@ export default function Home() {
       </m.section>
 
       {/* h) Con el apoyo de */}
-      <m.section id="apoyo" {...fadeUp()} className="mx-auto max-w-container px-4 pb-24 md:px-6">
+      <m.section id="apoyo" {...fadeUp()} className="mx-auto max-w-container px-4 pb-16 md:px-6">
         <h2 className="text-center text-2xl font-extrabold md:text-3xl">Con el apoyo de</h2>
         {/* TODO §15: lista definitiva de logos (escala de grises, tamaño uniforme) */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-8">

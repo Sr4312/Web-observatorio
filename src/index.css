@@ -30,8 +30,9 @@ html { scroll-behavior: smooth; }
 .marquee { overflow: hidden; }
 .marquee-track {
   display: flex;
+  height: 100%;
   width: max-content;
-  animation: marquee 60s linear infinite;
+  animation: marquee 100s linear infinite;
 }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 @keyframes marquee {
@@ -41,5 +42,14 @@ html { scroll-behavior: smooth; }
   .marquee-track { animation: none; }
 }
 
-:root { --space-section: clamp(4rem, 8vw, 7rem); }
+/* line-clamp explícito (la utility de Tailwind quedaba pisada a flow-root) */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  max-height: 2.75em; /* 2 líneas con leading-snug */
+}
+
+:root { --space-section: clamp(2.5rem, 4vw, 4rem); }
 .section-pad { padding-top: var(--space-section); padding-bottom: var(--space-section); }
