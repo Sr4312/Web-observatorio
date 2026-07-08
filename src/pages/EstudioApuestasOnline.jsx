@@ -1,13 +1,14 @@
 import { useRef } from 'react'
 import { m } from 'framer-motion'
-import { Bar } from 'react-chartjs-2'
+import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import {
-  Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip,
+  Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement,
+  PointElement, LineElement, Tooltip, Legend,
 } from 'chart.js'
 import html2canvas from 'html2canvas'
 import { Download } from 'lucide-react'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip)
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Tooltip, Legend)
 
 // ============================================================
 // ESTUDIO DE REFERENCIA (§10): autocontenido. Para un estudio
@@ -118,9 +119,39 @@ const barOpts = {
     y: { ticks: { font: { size: 12 } }, grid: { display: false } },
   },
   plugins: {
+    legend: { display: false },
     tooltip: {
       backgroundColor: C.ink, cornerRadius: 8, padding: 12,
       callbacks: { label: ctx => ` ${ctx.parsed.x}%` },
+    },
+  },
+}
+
+const donutOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '58%',
+  plugins: {
+    legend: { position: 'bottom', labels: { font: { size: 12 }, boxWidth: 12 } },
+    tooltip: {
+      backgroundColor: C.ink, cornerRadius: 8, padding: 12,
+      callbacks: { label: ctx => ` ${ctx.parsed}%` },
+    },
+  },
+}
+
+const lineOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: { ticks: { font: { size: 12 } }, grid: { display: false } },
+    y: { min: 0, max: 30, ticks: { font: { size: 12 }, callback: v => v + '%' }, grid: { color: C.rule } },
+  },
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: C.ink, cornerRadius: 8, padding: 12,
+      callbacks: { label: ctx => ` ${ctx.parsed.y}%` },
     },
   },
 }
@@ -182,9 +213,109 @@ export default function EstudioApuestasOnline() {
         </div>
       </header>
 
-      {/* 1 - Plataformas legales e ilegales */}
+      {/* 1 - Niveles de exposición */}
       <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
-        <SH n={1}>Plataformas de juegos legales e ilegales</SH>
+        <SH n={1}>¿Qué tan presentes están las apuestas online?</SH>
+        <div className="grid gap-8 md:grid-cols-2">
+          <DownloadableViz nombre="apuestas-online-exposicion">
+            <ChartCard titulo="Experiencia con las apuestas online" fuente={FUENTE}>
+              <Doughnut
+                data={{
+                  labels: [
+                    'Participa o participó alguna vez',
+                    'Conoce gente cercana que participa',
+                    'No participa ni conoce a nadie',
+                    'Nunca escuchó hablar del tema',
+                  ],
+                  datasets: [{ data: [16, 45, 27, 12], backgroundColor: [G[1], G[0], G[4], G[3]], borderWidth: 2, borderColor: '#FFFFFF' }],
+                }}
+                options={donutOpts}
+              />
+            </ChartCard>
+          </DownloadableViz>
+          <div className="space-y-6 self-center">
+            <MC value="6 de cada 10" label="adolescentes están expuestos al juego online, por participación directa (16%) o por vínculos cercanos que apuestan (45%)." accent />
+            <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
+              La práctica circula socialmente mucho más allá de quienes apuestan: casi la
+              mitad convive con amistades o familiares que lo hacen. Solo el 12% no escuchó
+              hablar del tema.
+            </p>
+          </div>
+        </div>
+      </m.section>
+
+      {/* 2 - Quiénes y cómo apuestan */}
+      <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
+        <SH n={2}>¿Quiénes y cómo apuestan?</SH>
+        <div className="grid gap-8 md:grid-cols-2">
+          <DownloadableViz nombre="apuestas-online-edad">
+            <ChartCard titulo="Participación directa según edad" fuente={FUENTE}>
+              <Line
+                data={{
+                  labels: ['13 años', '14', '15', '16', '17', '18 años'],
+                  datasets: [{
+                    data: [6, 9, 18, 18, 23, 24],
+                    borderColor: C.redOh,
+                    backgroundColor: C.redOh,
+                    pointRadius: 4,
+                    tension: 0.35,
+                  }],
+                }}
+                options={lineOpts}
+              />
+            </ChartCard>
+          </DownloadableViz>
+          <div className="space-y-6">
+            <MC value="3 veces más" label="apuestan los varones que las mujeres: 24% frente a 8%, y con mayor frecuencia e intensidad de juego." accent />
+            <div className="grid grid-cols-2 gap-6">
+              <MC value="65%" label="probó alguna vez, pero no apuesta habitualmente." />
+              <MC value="6%" label="apuesta o apostó todos los días." />
+            </div>
+            <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
+              Los casinos y loterías virtuales (ruleta, póker, tragamonedas) son el formato
+              más elegido (56%), seguidos por quienes los combinan con apuestas deportivas
+              (26%) y las apuestas exclusivamente deportivas (16%).
+            </p>
+          </div>
+        </div>
+      </m.section>
+
+      {/* 3 - Motivaciones */}
+      <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
+        <SH n={3}>¿Por qué empiezan?</SH>
+        <div className="grid gap-8 md:grid-cols-2">
+          <DownloadableViz nombre="apuestas-online-motivaciones">
+            <ChartCard titulo="Motivaciones de quienes apuestan" fuente={FUENTE}>
+              <Bar
+                data={barras(
+                  ['Quería probar suerte', 'Es divertido', 'Se gana plata fácil y rápido', 'Publicidad de influencers o famosos', 'Bonos, descuentos o créditos gratis', 'Competir con amistades'],
+                  [89, 84, 53, 50, 44, 42],
+                  G[3],
+                )}
+                options={barOpts}
+              />
+            </ChartCard>
+          </DownloadableViz>
+          <div className="space-y-6 self-center">
+            <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
+              La puerta de entrada es lúdica: la curiosidad y la diversión encabezan las
+              motivaciones. Pero detrás operan la promesa de plata fácil, las recomendaciones
+              de influencers y los bonos de bienvenida con que las plataformas incentivan a
+              empezar.
+            </p>
+            <blockquote className="border-l-[3px] p-5" style={{ borderColor: C.redOh, background: C.bgAlt }}>
+              <p className="font-bold">1 de cada 8 quedó endeudado</p>
+              <p className="mt-1 text-sm" style={{ color: C.inkMid }}>
+                el 12% de quienes apuestan quedó debiendo plata por apostar online.
+              </p>
+            </blockquote>
+          </div>
+        </div>
+      </m.section>
+
+      {/* 4 - Plataformas legales e ilegales */}
+      <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
+        <SH n={4}>Plataformas de juegos legales e ilegales</SH>
         <div className="grid items-center gap-8 md:grid-cols-2">
           <MC value="59%*" label="de las y los adolescentes no logran diferenciar plataformas de apuestas legales de aquellas que operan de forma ilegal." accent />
           <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
@@ -195,21 +326,36 @@ export default function EstudioApuestasOnline() {
         </div>
       </m.section>
 
-      {/* 2 - Publicidad */}
+      {/* 5 - Publicidad */}
       <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
-        <SH n={2}>Publicidad o contenidos de apuestas online</SH>
-        <div className="grid items-center gap-8 md:grid-cols-2">
-          <MC value="75%*" label="de las y los adolescentes vio publicidad o contenidos de apuestas online." accent />
-          <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
-            Redes sociales, influencers, sitios web, eventos deportivos y transmisiones en
-            vivo son los principales canales de exposición.
-          </p>
+        <SH n={5}>Publicidad o contenidos de apuestas online</SH>
+        <div className="grid gap-8 md:grid-cols-2">
+          <DownloadableViz nombre="apuestas-online-publicidad">
+            <ChartCard titulo="Exposición a publicidad entre quienes apuestan" fuente={FUENTE}>
+              <Bar
+                data={barras(
+                  ['Redes sociales y medios', 'Influencers o famosos', 'Páginas web', 'Eventos deportivos', 'Videojuegos y streaming'],
+                  [78, 76, 74, 73, 67],
+                  G[0],
+                )}
+                options={barOpts}
+              />
+            </ChartCard>
+          </DownloadableViz>
+          <div className="space-y-6 self-center">
+            <MC value="75%*" label="de las y los adolescentes vio publicidad o contenidos de apuestas online." accent />
+            <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
+              La publicidad llega a todos los segmentos, apuesten o no: incluso entre quienes
+              no participan ni conocen a nadie que lo haga, 7 de cada 10 vieron publicidad en
+              redes sociales. La oferta llega antes que la práctica.
+            </p>
+          </div>
         </div>
       </m.section>
 
-      {/* 3 - Riesgos y salud mental */}
+      {/* 6 - Riesgos y salud mental */}
       <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
-        <SH n={3}>Riesgos percibidos y efectos en la salud mental</SH>
+        <SH n={6}>Riesgos percibidos y efectos en la salud mental</SH>
         <div className="grid gap-8 md:grid-cols-2">
           <DownloadableViz nombre="apuestas-online-salud-mental">
             <ChartCard titulo="Efectos reportados por quienes apuestan" fuente={FUENTE}>
@@ -231,9 +377,9 @@ export default function EstudioApuestasOnline() {
         </div>
       </m.section>
 
-      {/* 4 - Medios de apuesta */}
+      {/* 7 - Medios de apuesta */}
       <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
-        <SH n={4}>Medios de apuesta</SH>
+        <SH n={7}>Medios de apuesta</SH>
         <div className="grid gap-8 md:grid-cols-2">
           <DownloadableViz nombre="apuestas-online-medios">
             <ChartCard titulo="Cómo acceden quienes apuestan" fuente={FUENTE}>
@@ -255,9 +401,34 @@ export default function EstudioApuestasOnline() {
         </div>
       </m.section>
 
-      {/* 5 - Demanda de intervención */}
+      {/* 8 - El silencio alrededor del tema */}
       <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
-        <SH n={5}>Existe una alta demanda de intervención</SH>
+        <SH n={8}>El tema del que no se habla</SH>
+        <div className="grid gap-8 md:grid-cols-2">
+          <div className="space-y-6">
+            <MC value="8 de cada 10" label="hogares hablan poco o directamente nunca sobre apuestas online. En la escuela la proporción es casi idéntica." accent />
+            <MC value="2 de cada 10" label="de quienes apuestan se preocupan por el tema: la cercanía con la práctica reduce la percepción del riesgo." />
+          </div>
+          <div className="space-y-6 self-center">
+            <p className="max-w-[72ch]" style={{ color: C.inkMid }}>
+              Mientras la publicidad les llega todos los días, los espacios de conversación
+              son escasos: ni el hogar ni la escuela aparecen como lugares donde el tema se
+              hable con frecuencia.
+            </p>
+            <blockquote className="border-l-[3px] p-5" style={{ borderColor: C.redOh, background: C.bgAlt }}>
+              <p className="font-bold">Poder contarlo sin sentirse juzgados/as</p>
+              <p className="mt-1 text-sm" style={{ color: C.inkMid }}>
+                es la herramienta de ayuda más valorada: 67% de quienes están expuestos al
+                fenómeno quisiera poder hablarlo con una persona adulta de confianza.
+              </p>
+            </blockquote>
+          </div>
+        </div>
+      </m.section>
+
+      {/* 9 - Demanda de intervención */}
+      <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
+        <SH n={9}>Existe una alta demanda de intervención</SH>
         <div className="grid gap-8 md:grid-cols-2">
           <DownloadableViz nombre="apuestas-online-demanda">
             <ChartCard titulo="Qué piden las y los adolescentes" fuente={FUENTE}>
@@ -280,7 +451,7 @@ export default function EstudioApuestasOnline() {
 
       {/* Recomendaciones */}
       <m.section {...fadeUp()} className="mx-auto max-w-container px-4 py-12 md:px-6">
-        <SH n={6}>Recomendaciones</SH>
+        <SH n={10}>Recomendaciones</SH>
         <div className="grid gap-6 md:grid-cols-3">
           {RECOMENDACIONES.map(([letra, texto]) => (
             <div key={letra} className="rounded border p-5" style={{ borderColor: C.rule }}>
@@ -296,13 +467,15 @@ export default function EstudioApuestasOnline() {
         <div className="mx-auto max-w-container px-4 py-16 md:px-6">
           <SectionLabel>El argumento</SectionLabel>
           <p className="mt-4 max-w-[72ch] text-xl font-bold leading-relaxed">
-            Las apuestas online llegaron a la adolescencia antes que las respuestas: el{' '}
-            <span style={{ color: C.red }}>59%</span> no distingue plataformas legales de
-            ilegales, el <span style={{ color: C.red }}>83%</span> de quienes apuestan usa
-            billeteras virtuales y <span style={{ color: C.red }}>8 de cada 10</span> creen
-            que las medidas actuales no funcionan. Construir entornos seguros exige regulación,
-            prevención digital y espacios de confianza - y las y los adolescentes ya los están
-            pidiendo.
+            Las apuestas online llegaron a la adolescencia antes que las respuestas:{' '}
+            <span style={{ color: C.red }}>6 de cada 10</span> adolescentes están expuestos
+            al fenómeno, el <span style={{ color: C.red }}>59%</span> no distingue plataformas
+            legales de ilegales, el <span style={{ color: C.red }}>83%</span> de quienes
+            apuestan usa billeteras virtuales y <span style={{ color: C.red }}>8 de cada 10</span>{' '}
+            creen que las medidas actuales no funcionan. Mientras tanto, en la mayoría de los
+            hogares y escuelas el tema apenas se habla. Construir entornos seguros exige
+            regulación, prevención digital y espacios de confianza - y las y los adolescentes
+            ya los están pidiendo.
           </p>
           <div className="mt-10 border-t pt-6" style={{ borderColor: C.divider }}>
             <p className="text-sm font-bold">Metodología</p>
