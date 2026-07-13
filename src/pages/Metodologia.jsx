@@ -40,7 +40,67 @@ export default function Metodologia() {
         </p>
       </div>
 
-      <div className="mt-12 flex flex-wrap gap-4">
+      <div className="mt-16">
+        <h2 className="font-display text-[clamp(1.5rem,3vw,2.25rem)] font-medium uppercase tracking-[0.02em]">
+          Nuestro equipo
+        </h2>
+
+        <h3 className="mt-8 text-sm font-semibold uppercase tracking-[0.08em] text-cruz-red">
+          Equipo del Observatorio Humanitario
+        </h3>
+        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              nombre: 'Jose Scioli',
+              rol: 'Director del Observatorio Humanitario',
+              desc: 'AGREGAR DESCRIPCION.',
+            },
+            {
+              nombre: 'Sol Kaplan Mettola',
+              rol: 'Coordinadora de Gestión de la Información',
+              desc: 'AGREGAR DESCRIPCION.',
+            },
+            {
+              nombre: 'Salvador Ron',
+              rol: 'Coordinador del Laboratorio de Innovación Humanitaria',
+              desc: 'AGREGAR DESCRIPCION.',
+            },
+          ].map((p) => (
+            <div key={p.nombre} className="rounded border border-cruz-ink/10 p-5">
+              <p className="font-display text-lg font-medium">{p.nombre}</p>
+              <p className="mt-1 text-sm font-medium text-cruz-red">{p.rol}</p>
+              <p className="mt-3 text-sm text-cruz-gris">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.08em] text-cruz-red">
+          Equipo de asesores
+        </h3>
+        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              nombre: 'Juana Stratta',
+              rol: 'Coordinadora de Investigación y elaboración del marco conceptual',
+            },
+            {
+              nombre: 'Luciana Polischuk',
+              rol: 'Analista y Redactora de informes',
+            },
+            {
+              nombre: 'Lucas Klobovs',
+              rol: 'Asesor Metodológico',
+            },
+          ].map((p) => (
+            <div key={p.nombre} className="rounded border border-cruz-ink/10 p-5">
+              <p className="font-display text-lg font-medium">{p.nombre}</p>
+              <p className="mt-1 text-sm font-medium text-cruz-red">{p.rol}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-16 flex flex-wrap gap-4">
         <Link to="/estudios"
               className="rounded bg-cruz-red px-6 py-3 font-medium text-white transition-colors hover:bg-cruz-redHover">
           Ver nuestros estudios
