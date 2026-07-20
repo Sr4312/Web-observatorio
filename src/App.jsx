@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 
 const Home = lazy(() => import('./pages/Home'))
 const EstudioApuestasOnline = lazy(() => import('./pages/EstudioApuestasOnline'))
+const EstudioPersonasMayores = lazy(() => import('./pages/EstudioPersonasMayores'))
 const Estudios = lazy(() => import('./pages/Estudios'))
 const EstudioDetalle = lazy(() => import('./pages/EstudioDetalle'))
 const Metodologia = lazy(() => import('./pages/Metodologia'))
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="monitoreo-digital" element={<S><MonitoreoDigital /></S>} />
         {/* Rutas estáticas de estudios (Estudio*.jsx) van acá, ANTES de la genérica */}
         <Route path="estudios/apuestas-online-adolescencia" element={<S><EstudioApuestasOnline /></S>} />
+        <Route path="estudios/calidad-vida-personas-mayores-2024" element={<S><EstudioPersonasMayores /></S>} />
         <Route path="estudios/:id" element={<S><EstudioDetalle /></S>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
